@@ -8,14 +8,20 @@ import SearchBox from "../SearchBox/SearchBox";
 import css from "./App.module.css";
 
 export default function App() {
-  const [contacts, setContacts] = useState(initialContacts);
-
+  const [contacts, setContacts] = useState(() => {
+    const savedContacts = localStorage.getItem("contacts");
+    return savedContacts ? JSON.parse(savedContacts) : initialContacts;
+  });
   const [filter, setFilter] = useState("");
 
-  const addContact = (name, number) => {
+  useEffect(() => {
+    localStorage.setItem("contacts", JSON.stringify(contacts));
+  }, [contacts]);
+
+  function addContact(name, number) {
     const newContact = { id: nanoid(), name, number };
     setContacts((prev) => [...prev, newContact]);
-  };
+  }
 
   const deleteContact = (id) => {
     setContacts((prev) => prev.filter((contact) => contact.id !== id));
